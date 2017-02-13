@@ -1,11 +1,12 @@
 var todoApp = {
   todos: [], //data source/store
-  init: function(){
+
+  init: function(){ //start it upppp
     todoApp.cacheDom();
     todoApp.addEventListeners();
     todoApp.render();
   },
-  
+
   cacheDom: function(){
     todoApp.createButton = document.querySelector('#create');
     todoApp.taskInput = document.querySelector('#task');
@@ -16,10 +17,18 @@ var todoApp = {
 
   render: function(){
     console.log(todoApp.todos);
-    var listItemsFromTodos = todoApp.todos.map(function(todo){
-      return `<li>${todo.task}:  (${todo.date})  [${todo.category}]</li>`;
-    }).join('');
+    var listItemsFromTodos = todoApp.todos.map(todoApp.createListItem).join('');
     todoApp.list.innerHTML = listItemsFromTodos;
+    var deleteButtons = document.querySelectorAll('.delete');
+    deleteButtons.forEach(function(button){
+      button.addEventListener('click', todoApp.removeTodo);
+    });
+  },
+
+  createListItem: function(todo, index){
+    return `<li data-index='${index}'>${todo.task}:  (${todo.date})  [${todo.category}]
+            <button class='delete'>X</button>
+            </li>`;
   },
 
   addEventListeners: function() {
@@ -35,6 +44,14 @@ var todoApp = {
     todoApp.taskInput.value = '';
     todoApp.dateInput.value = '';
     todoApp.categoryInput.value = '';
+    todoApp.render();
+  },
+
+  removeTodo: function(){
+    var element = this; //only refers to the element because we are in an event handler
+    var parent = element.parentNode;
+    var index = parent.dataset.index;
+    todoApp.todos.splice(index, 1);
     todoApp.render();
   }
 };
